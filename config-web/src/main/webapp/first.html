@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head >
+    <meta charset="UTF-8">
+    <title>Extjs 测试</title>
+    <link rel="stylesheet" href="/config/3rd/extjs/resources/css/ext-all.css">
+    <link rel="stylesheet" href="/config/resource/general/config.css">
+    <script type="text/javascript" src="/config/3rd/extjs/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/ext-all-debug.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/src/locale/ext-lang-zh_CN.js"></script>
+
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/CheckColumn.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/SearchField.js"></script>
+
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/Filter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/BooleanFilter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/DateFilter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/ListFilter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/NumericFilter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/filter/StringFilter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/gridfilters/GridFilters.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/config/3rd/extjs/examples/ux/treegrid/treegrid.css" rel="stylesheet" />
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
+    <script type="text/javascript" src="/config/3rd/extjs/examples/ux/treegrid/TreeGrid.js"></script>
+
+    <script type="text/javascript" src="/config/resource/general/form/commonQueryForm.js"></script>
+    <script type="text/javascript" src="/config/resource/general/common.js"></script>
+    <script type="text/javascript" src="/config/resource/general/form/linkCombox.js"></script>
+    <script type="text/javascript" src="/config/resource/general/header/headerBanner.js"></script>
+    <script type="text/javascript" src="/config/resource/general/navigation/leftNavigation.js"></script>
+    <script type="text/javascript" src="/config/resource/general/navigation/leftNavPanel.js"></script>
+
+
+    <script type="text/javascript" src="/config/resource/general/grid/configGrid.js"></script>
+    <script type="text/javascript" src="/config/resource/general/grid/myGrid.js"></script>
+    <script type="text/javascript" src="/config/resource/general/grid/treeGrid.js"></script>
+
+    <script type="text/javascript" src="/config/resource/general/form/queryForm.js"></script>
+    <script type="text/javascript" src="/config/resource/general/content/centorPanel.js"></script>
+    <script type="text/javascript" src="/config/resource/work/softwareUsagePanel.js"></script>
+    <script type="text/javascript" src="/config/resource/work/searchResult.js"></script>
+
+    <script type="text/javascript">
+        Ext.onReady(function(){
+            Ext.QuickTips.init();
+            var starter = new Ext.Panel({html:'firstPage',frame:false,title:'firstPage'});
+
+            var gridroot2 = new Ext.tree.AsyncTreeNode({
+                expanded: true,
+                children: [{
+                    text: '导航树',
+                    leaf: true,
+                    id:'test-grid'
+                }, {
+                    text: '上传案例',
+                    leaf: true,
+                    id:'second'
+                }, {
+                    text: '可编辑表格',
+                    leaf: true,
+                    id:'editgrid'
+                }]
+            });
+           var second = new Ext.Panel({html:'secondPage',frame:false,title:'secondPage',id:'second-panel'});
+            var grid = new ext.sgx.general.leftNavigation({ collapsible: true,  width: 200,title: '导航栏',id:'test-grid-panel',root:gridroot2});
+            var editgrid = new ext.sgx.general.configGrid({id:'editgrid-panel'});
+            var mygrid = new ext.sgx.general.myGrid({id:'mygrid-panel'})
+            var myform = new ext.sgx.general.queryForm({id:'queryForm-panel'})
+//            var commonQueryForm = new ext.sgx.general.commonQueryForm({id:'commonQueryForm-panel',maxWidth:600})
+            var commonQueryForm = new ext.sgx.general.commonQueryForm({id:'commonQueryForm-panel'});
+            var softwareUsagePanel = new ext.sgx.work.softwareUsagePanel({id:'softwareUsage-panel'});
+            var treeGrid = new ext.sgx.general.treeGrid({id:'treeGrid-panel'});
+            new Ext.Viewport({
+                layout: 'border',
+                items: [new ext.sgx.general.headerBanner({
+                    region: 'north',
+                    border: false,
+                    height:116,
+                    margins: '0 0 5 0'
+                }), new ext.sgx.general.leftNavPanel({
+                    region: 'west',
+                    collapsible: true,
+                    title: '导航栏',
+                    width: 200
+                }), {
+                    region: 'south',
+                    title: 'Title for Panel',
+                    collapsible: true,
+                    html: 'Information goes here',
+                    split: true,
+                    height: 100
+                }, {
+                    region: 'east',
+                    title: 'Title for the Grid Panel',
+                    collapsible: true,
+                    split: true,
+                    width: 200
+                }, new ext.sgx.general.centorPanel({
+                    region: 'center',
+                    margins:'0 0 0 5',
+                    id:'home-centent-panel',
+                    items:[starter,second,grid,editgrid,mygrid,myform,commonQueryForm,softwareUsagePanel,treeGrid]
+                })]
+            }).show();
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

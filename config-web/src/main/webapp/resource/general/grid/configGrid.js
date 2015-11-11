@@ -1,0 +1,158 @@
+Ext.ns("ext.sgx.general")
+
+ext.sgx.general.configGrid = function (cfg) {
+    Ext.apply(this,cfg);
+    // shorthand alias
+    var fm = Ext.form;
+
+    // the check column is created using a custom plugin
+    var checkColumn = new Ext.grid.CheckColumn({
+        header: 'Indoor?',
+        dataIndex: 'indoor',
+        width: 55
+    });
+
+    // the column model has information about grid columns
+    // dataIndex maps the column to the specific data field in
+    // the data store (created below)
+    var cm = new Ext.grid.ColumnModel({
+        // specify any defaults for each column
+        defaults: {
+            sortable: true // columns are not sortable by default
+        },
+        columns: [
+            {
+                id: 'common',
+                header: 'Common Name',
+                dataIndex: 'common',
+                width: 220,
+                // use shorthand alias defined above
+                editor: new fm.TextField({
+                    allowBlank: false
+                })
+            }, {
+                header: 'Light',
+                dataIndex: 'light',
+                width: 130,
+                name:'light',
+                editor: new fm.ComboBox({
+                    typeAhead: true,
+                    triggerAction: 'all',
+                    // transform the data already specified in html
+                    mode: 'local',
+                    store: new Ext.data.ArrayStore({
+                        id: 0,
+                        fields: [
+                            'light',
+                            'displayText'
+                        ],
+                        data: [[1, 'item1'], [2, 'item2']]
+                    }),
+                    valueField: 'light',
+                    displayField: 'displayText'
+                })
+            }, {
+                header: 'Price',
+                dataIndex: 'price',
+                width: 70,
+                align: 'right',
+                renderer: 'usMoney',
+                editor: new fm.NumberField({
+                    allowBlank: false,
+                    allowNegative: false,
+                    maxValue: 100000
+                })
+            }, {
+                header: 'Available',
+                dataIndex: 'availDate',
+                width: 95,
+                renderer: ext.sgx.general.Tools.formatDate,
+                editor: new fm.DateField({
+                    format: 'Y-M-d',
+                    minValue: '2005/01/06',
+                    disabledDays: [0, 6],
+                    disabledDaysText: 'Plants are not available on the weekends'
+                })
+            },
+            checkColumn // the plugin instance
+        ]
+    });
+
+    // create the Data Store
+    var store = new Ext.data.Store({
+        // destroy the store if the grid is destroyed
+        autoDestroy: true,
+
+        // load remote data using HTTP
+        url: 'data/plants.xml',
+
+        // specify a XmlReader (coincides with the XML format of the returned data)
+        reader: new Ext.data.XmlReader({
+            // records will have a 'plant' tag
+            record: 'plant',
+            // use an Array of field definition objects to implicitly create a Record constructor
+            fields: [
+                // the 'name' below matches the tag name to read, except 'availDate'
+                // which is mapped to the tag 'availability'
+                {name: 'common', type: 'string'},
+                {name: 'botanical', type: 'string'},
+                {name: 'light'},
+                {name: 'price', type: 'float'},
+                // dates can be automatically converted by specifying dateFormat
+                {name: 'availDate', mapping: 'availability', type: 'date', dateFormat: 'm/d/Y'},
+                {name: 'indoor', type: 'bool'}
+            ]
+        }),
+
+        sortInfo: {field:'common', direction:'ASC'}
+    });
+
+    // create the editor grid
+    var grid = new Ext.grid.EditorGridPanel({
+
+    });
+
+    // manually trigger the data store load
+    store.load({
+        // store loading is asynchronous, use a load listener or callback to handle results
+        callback: function(){
+            //Ext.Msg.show({
+            //    title: 'Store Load Callback',
+            //    msg: 'store was loaded, data available for processing',
+            //    modal: false,
+            //    icon: Ext.Msg.INFO,
+            //    buttons: Ext.Msg.OK
+            //});
+        }
+    });
+    ext.sgx.general.configGrid.superclass.constructor.call(this, {
+        store: store,
+        cm: cm,
+        width: 600,
+        height: 300,
+        autoExpandColumn: 'common', // column with this id will be expanded
+        title: 'Edit Plants?',
+        frame: true,
+        // specify the check column plugin on the grid so the plugin is initialized
+        plugins: checkColumn,
+        clicksToEdit: 1,
+        tbar: [{
+            text: 'Add Plant',
+            handler : function(){
+                // access the Record constructor through the grid's store
+                var Plant = grid.getStore().recordType;
+                var p = new Plant({
+                    common: 'New Plant 1',
+                    light: 'Mostly Shade',
+                    price: 0,
+                    availDate: (new Date()).clearTime(),
+                    indoor: false
+                });
+                grid.stopEditing();
+                store.insert(0, p);
+                grid.startEditing(0, 0);
+            }
+        }]
+    });
+};
+Ext.extend(ext.sgx.general.configGrid,Ext.grid.EditorGridPanel, {});
